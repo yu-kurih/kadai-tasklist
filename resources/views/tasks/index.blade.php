@@ -2,8 +2,9 @@
 
 @section('content')
 
-<!-- ここにページ毎のコンテンツを書く -->
-
+@if(Auth::check())
+    {{ Auth::user()->name }}
+    
     <h1>タスク一覧</h1>
 
     @if (count($tasks) > 0)
@@ -11,9 +12,11 @@
             <thead>
                 <tr>
                     <th>id</th>
-                    <th>タスク一覧</th>
+                    <th>status</th>
+                    <th>task</th>
                 </tr>
             </thead>
+            
             <tbody>
              @foreach ($tasks as $task)
                 <tr>
@@ -27,8 +30,16 @@
 
     {!! link_to_route('tasks.create', '新規タスクの追加', [], ['class' => 'btn btn-primary']) !!}
 
-
     @endif
 
+@else
+    <div class="center jumbotron">
+        <div class="text-center">
+            <h1>Welcome to the Task List</h1>
+            {!! link_to_route('signup.get', 'Sign up now!', [], ['class' => 'btn btn-lg btn-primary']) !!}
+        </div>
+    </div>
+    
+@endif
 
 @endsection

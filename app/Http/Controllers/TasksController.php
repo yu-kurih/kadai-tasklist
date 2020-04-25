@@ -15,12 +15,17 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
+        
+            $tasks = Task::all();
 
-        return view('tasks.index', [
-            'tasks' => $tasks,
-        ]);
+            return view('tasks.index', [
+              'tasks' => $tasks,
+            ]);
+        
+        return view('tasks.index', $data);
     }
+    
+
 
     /**
      * Show the form for creating a new resource.
@@ -49,12 +54,19 @@ class TasksController extends Controller
             'content' => 'required|max:191',
         ]);
         
-        $task = new Task;
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
+        $request->user()->tasks()->create([
+            'content' => $request->content,
+            'status' => $request->status,
+        ]);
+        
+        return back();
+        
+        //$task = new Task;
+        //$task->status = $request->status;
+        //$task->content = $request->content;
+        //$task->save();
 
-        return redirect('/');
+        //return redirect('/');
     }
 
     /**
@@ -65,11 +77,17 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        $task = Task::find($id);
-
-        return view('tasks.show', [
-            'task' => $task,
-        ]);
+        $task = \App\Task::find($id);
+        
+        if (\Auth::id() === $task->user_id) {
+            $task = Task::find($id);
+            return view('tasks.show', [
+                'task' => $task,
+            ]);
+        }
+        else{
+            return back();
+        }
     }
 
     /**
